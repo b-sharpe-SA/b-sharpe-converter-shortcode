@@ -312,7 +312,13 @@
 
 
   $.fn.initBsharpeConverter = function () {
-    return new BSharpeConverter(this);
+    const instances = [];
+    
+    this.each(function () {
+      instances.push(new BSharpeConverter($(this)));
+    });
+
+    return instances;
   }
 
 
