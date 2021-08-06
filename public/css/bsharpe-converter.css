@@ -135,7 +135,7 @@
   height: 100%;
 }
 
-.b-sharpe-converter .currency-option {
+.currency-option {
   display: flex;
   align-items: center;
   height: 100%;
@@ -143,8 +143,24 @@
   padding: 0 12px;
 }
 
-.b-sharpe-converter .currency-option img {
-  margin-right: 10px;
+.currency-option-img {
+  display: flex;
+  justify-content: center;
+  height: 20px;
+  /* 51px × 20px are the dimensions of the widest flag to this day (Qatar): exact ratio = 1.975308642 */
+  width: 51px;
+  padding-right: 4px;
+}
+
+.currency-option-img img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.currency-option-iso {
+  display: flex;
+  justify-content: center;
+  width: 30px;
 }
 
 .b-sharpe-converter .select2-dropdown {

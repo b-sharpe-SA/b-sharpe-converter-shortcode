@@ -114,7 +114,7 @@
             if (!state.id) {
               return state.text;
             }
-            return $(`<span class="currency-option"><img src="${state.element.dataset["img"]}" alt="${state.text}">${state.text}</span>`);
+            return $(`<div class="currency-option"><div class="currency-option-img"><img src="${state.element.dataset["img"]}" alt="${state.text}"></div><div class="currency-option-iso">${state.text}</div></div>`);
           };
           for (let selectInput of [this.currencySellSelect, this.currencyBuySelect]) {
             selectInput.select2({
