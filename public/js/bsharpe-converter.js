@@ -55,7 +55,7 @@
 
       this.dom.on("currenciesLoaded.bsharpeConverter", () => {
         this.amountSellInput.focus();
-        setTimeout(() => this.convert(), 100);
+        setTimeout(() => this.convert(), 500);
       });
     }
 
@@ -220,7 +220,17 @@
     }
 
     convert() {
-      let currencyLeft, currencyRight, amount, $resultAmount;
+      // This needs to be executed as the very first step to avoid discrepancy between both inputs,
+      // even if it looks ugly and un-optimized
+      let $resultAmount;
+      if (this.mode === this.MODES.sell) {
+        $resultAmount = this.amountBuyInput;
+      } else if (this.mode === this.MODES.buy) {
+        $resultAmount = this.amountSellInput;
+      }
+      this._resetResults($resultAmount);
+
+      let currencyLeft, currencyRight, amount;
       const soldCurrency = this.currencySellSelect.val();
       const boughtCurrency = this.currencyBuySelect.val();
 
@@ -232,7 +242,6 @@
         }
         currencyLeft = soldCurrency;
         currencyRight = boughtCurrency;
-        $resultAmount = this.amountBuyInput;
 
       } else if (this.mode === this.MODES.buy) {
         amount = this.amountBuyInput.val();
@@ -242,12 +251,9 @@
         }
         currencyLeft = boughtCurrency;
         currencyRight = soldCurrency;
-        $resultAmount = this.amountSellInput;
       }
 
       if (currencyLeft && currencyRight && amount && currencyLeft !== currencyRight) {
-        this._resetResults($resultAmount);
-
         const url = `${this.baseAPIURL}${this.convertRoute}`.replace("{operation}", this.mode)
                                                             .replace("{currency_from}", currencyLeft)
                                                             .replace("{currency_to}", currencyRight)
