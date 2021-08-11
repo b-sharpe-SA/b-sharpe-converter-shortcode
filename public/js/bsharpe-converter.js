@@ -11,8 +11,8 @@
 
       this.dom = dom;
       this.baseAPIURL = "https://api.b-sharpe.com";
-      this.currenciesRoute = "/api/core/currency/";
-      this.convertRoute = "/api/bsharpe/{operation}/{currency_from}/{currency_to}/{amount}/";
+      this.currenciesRoute = "/api/v3/core/currency/";
+      this.convertRoute = "/api/v3/bsharpe/{operation}/{currency_from}/{currency_to}/{amount}/";
       this.locale = document.documentElement.lang.toLowerCase();
       if (this.locale === "fr" || this.locale === "fr-fr") {
         this.locale = "fr-ch";
@@ -94,14 +94,14 @@
         }).done((currencies, textStatus, jqXHR) => {
           // Fill select with currencies
           for (const currency of currencies) {
-            if (currency.status === "" || (currency.status === "company" && this.companyMode)) {
-              const $option = $(`<option value="${currency.name_iso}" data-img="${this.baseAPIURL}${currency.flag}">${currency.name_iso}</option>`);
+            if (!currency.company_only || (currency.company_only && this.companyMode)) {
+              const $option = $(`<option value="${currency.iso_alpha}" data-img="${this.baseAPIURL}${currency.flag}">${currency.iso_alpha}</option>`);
               const $optionSell = $option.clone();
               const $optionBuy = $option.clone();
-              if (currency.name_iso === defaultSoldCurrency) {
+              if (currency.iso_alpha === defaultSoldCurrency) {
                 $optionSell.attr("selected", true);
               }
-              if (currency.name_iso === defaultBoughtCurrency) {
+              if (currency.iso_alpha === defaultBoughtCurrency) {
                 $optionBuy.attr("selected", true);
               }
               this.currencySellSelect.append($optionSell);
@@ -269,13 +269,13 @@
 
           const feesFormatter = new Intl.NumberFormat(this.locale, {style: "currency", currency: deal.bsharpe_fees.converted.fees_currency});
           this.feesSpan.html(feesFormatter.format(deal.bsharpe_fees.converted.all));
-          
+
           const savingsFormatter = new Intl.NumberFormat(this.locale, {style: "currency", currency: deal.bsharpe_trade_result.currency});
           this.savingsSpan.html(savingsFormatter.format(Math.abs(deal.bsharpe_trade_result.savings)));
 
           this.exchangeRateSpan.html(deal.bsharpe_trade_result.quote);
           this.exchangeRateTimestampSpan.html(`(${this.datetimeFormatter(new Date(deal.interbank_rate.timestamp))})`);
-          
+
           const bsharpeRate = deal.bsharpe_trade_result.quote;
           const bankRate = deal.standard_trade_result.quote;
           let comparisonSoldAmountFormatter,
@@ -313,7 +313,7 @@
 
   $.fn.initBsharpeConverter = function () {
     const instances = [];
-    
+
     this.each(function () {
       instances.push(new BSharpeConverter($(this)));
     });
