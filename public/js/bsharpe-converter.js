@@ -266,7 +266,7 @@
             Authorization: `Bearer ${this.APIKey}`,
           },
         }).done((deal, textStatus, jqXHR) => {
-          // Result amount **needs** to be formatted in "currecy" mode, since it differs from regular "number" mode in
+          // Result amount **needs** to be formatted in "currency" mode, since it differs from regular "number" mode in
           // some locales (eg. fr-ch that uses the comma as a decimal separator for numbers but a point for money
           // amounts). The trick here is to display the currency as its code, which can then be stripped to parse only
           // the raw amount.
