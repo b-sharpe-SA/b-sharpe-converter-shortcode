@@ -54,8 +54,10 @@
       this._bindListeners();
 
       this.dom.on("currenciesLoaded.bsharpeConverter", () => {
+        this._formatNumericInput(this.amountSellInput.get(0));
+        this.sellMode();
         this.amountSellInput.focus();
-        setTimeout(() => this.convert(), 500);
+        this.convert();
       });
     }
 
@@ -135,6 +137,16 @@
       });
     }
 
+    _formatNumericInput(elt) {
+      const $elt = $(elt),
+            formatter = new Intl.NumberFormat(this.locale, {style: "currency", currency: "XXX", currencyDisplay: "code"}),
+            sanitizedAmount = this._sanitizeAmount($elt.val()),
+            formattedAmount = formatter.format(sanitizedAmount).replace("XXX", "").trim(),
+            inputSelectionEnd = elt.selectionEnd;
+      $elt.val(formattedAmount);
+      elt.selectionEnd = inputSelectionEnd;
+    }
+
     _bindListeners() {
       const triggerConvertOnKeyUp = (e) => {
         const triggerOnTheseKeysOnly = [
@@ -169,9 +181,11 @@
       }
 
       this.amountSellInput.on("focus", () => this.sellMode())
-                          .on("keyup", triggerConvertOnKeyUp);
+                          .on("keyup", triggerConvertOnKeyUp)
+                          .on("keyup", (e) => this._formatNumericInput(e.currentTarget));
       this.amountBuyInput.on("focus", () => this.buyMode())
-                         .on("keyup", triggerConvertOnKeyUp);
+                         .on("keyup", triggerConvertOnKeyUp)
+                         .on("keyup", (e) => this._formatNumericInput(e.currentTarget));
 
       this.currencySellSelect.on("change", () => this.convert());
       this.currencyBuySelect.on("change", () => this.convert());
