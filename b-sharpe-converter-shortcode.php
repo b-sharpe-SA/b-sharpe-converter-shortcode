@@ -13,7 +13,7 @@
  * Plugin Name:       [b-sharpe-converter] shortcode
  * Plugin URI:        https://www.b-sharpe.com
  * Description:       Easily insert b-sharpe's currency converter on your pages with a simple shortcode.
- * Version:           5.0.6
+ * Version:           5.0.7
  * Requires at least: 5.0
  * Author:            b-sharpe SA
  * Text Domain:       b-sharpe-converter-shortcode
@@ -26,7 +26,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('B_SHARPE_CONVERTER_SHORTCODE_VERSION', '5.0.6');
+define('B_SHARPE_CONVERTER_SHORTCODE_VERSION', '5.0.7');
 
 function bsharpe_converter_shortcode_register() {
     // Vendors

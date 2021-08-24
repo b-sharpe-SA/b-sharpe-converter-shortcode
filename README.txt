@@ -3,7 +3,7 @@ Contributors: bsharpe
 Tags: finance, currency, forex, exchange, money
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 5.0.6
+Stable tag: 5.0.7
 License: GPL-3.0+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -40,6 +40,11 @@ Our currency converter uses real-time quotes from the market to provide you with
 2. Detailed comparison to a traditional bank.
 
 == Changelog ==
+
+= 5.0.7 =
+* Changed: format user input for more readability
+* Changed: connect to most recent API routes
+* Fixed: rare issue that caused incorrect results to be displayed
 
 = 5.0.6 =
 * Changed: use new currency flags
