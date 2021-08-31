@@ -31,6 +31,7 @@ define('B_SHARPE_CONVERTER_SHORTCODE_VERSION', '5.0.9');
 function bsharpe_converter_shortcode_register() {
     // Vendors
     wp_register_style('b-sharpe-converter-shortcode-select2-css', plugins_url('public/css/vendor/select2/select2.min.css', __FILE__), [], '4.0.13');
+    wp_register_script('b-sharpe-converter-shortcode-cleave-js', plugins_url('public/js/vendor/cleave.js/cleave.min.js', __FILE__), [], '1.6.0');
     wp_register_script('b-sharpe-converter-shortcode-select2-js', plugins_url('public/js/vendor/select2/select2.min.js', __FILE__), [], '4.0.13');
     wp_register_script('b-sharpe-converter-shortcode-popper-js', plugins_url('public/js/vendor/tippy/popper.min.js', __FILE__), [], '2.9.2');
     wp_register_script('b-sharpe-converter-shortcode-tippy-js', plugins_url('public/js/vendor/tippy/tippy.min.js', __FILE__), ['b-sharpe-converter-shortcode-popper-js'], '6.3.1');
@@ -38,7 +39,7 @@ function bsharpe_converter_shortcode_register() {
     // Custom
     wp_register_style('b-sharpe-converter-shortcode-tippy-theme-css', plugins_url('public/css/tippy-theme.css', __FILE__), [], B_SHARPE_CONVERTER_SHORTCODE_VERSION);
     wp_register_style('b-sharpe-converter-shortcode-css', plugins_url('public/css/bsharpe-converter.css', __FILE__), ['b-sharpe-converter-shortcode-select2-css', 'b-sharpe-converter-shortcode-tippy-theme-css'], B_SHARPE_CONVERTER_SHORTCODE_VERSION);
-    wp_register_script('b-sharpe-converter-shortcode-js', plugins_url('public/js/bsharpe-converter.js', __FILE__), ['wp-i18n', 'jquery', 'b-sharpe-converter-shortcode-select2-js', 'b-sharpe-converter-shortcode-tippy-js'], B_SHARPE_CONVERTER_SHORTCODE_VERSION);
+    wp_register_script('b-sharpe-converter-shortcode-js', plugins_url('public/js/bsharpe-converter.js', __FILE__), ['wp-i18n', 'jquery', 'b-sharpe-converter-shortcode-cleave-js', 'b-sharpe-converter-shortcode-select2-js', 'b-sharpe-converter-shortcode-tippy-js'], B_SHARPE_CONVERTER_SHORTCODE_VERSION);
     wp_set_script_translations('b-sharpe-converter-shortcode-js', 'b-sharpe-converter-shortcode');
 }
 add_action('wp_enqueue_scripts', 'bsharpe_converter_shortcode_register');

@@ -4,6 +4,49 @@
 
   const {__, _x, _n, sprintf} = wp.i18n;
 
+  const numberFormat = {
+    "en-us": {
+      decimalSeparator: {
+        str: ".",
+        regex: /\./g,
+      },
+      thousandsSeparator: {
+        str: ",",
+        regex: /\,/g,
+      },
+    },
+    "de": {
+      decimalSeparator: {
+        str: ",",
+        regex: /\,/g,
+      },
+      thousandsSeparator: {
+        str: ".",
+        regex: /\./g,
+      },
+    },
+    "fr-ch": {
+      decimalSeparator: {
+        str: ".",
+        regex: /\./g,
+      },
+      thousandsSeparator: {
+        str: " ",
+        regex: /\s/g,
+      },
+    },
+    "it": {
+      decimalSeparator: {
+        str: ",",
+        regex: /\,/g,
+      },
+      thousandsSeparator: {
+        str: ".",
+        regex: /\./g,
+      },
+    },
+  }
+
 
   class BSharpeConverter {
     constructor(dom) {
@@ -14,11 +57,16 @@
       this.currenciesRoute = "/api/v3/core/currency/";
       this.convertRoute = "/api/v3/bsharpe/{operation}/{currency_from}/{currency_to}/{amount}/";
       this.locale = document.documentElement.lang.toLowerCase();
-      if (this.locale === "fr" || this.locale === "fr-fr") {
-        this.locale = "fr-ch";
-      } else if (this.locale === "en") {
+      if (this.locale === "en") {
         this.locale = "en-us";
+      } else if (this.locale === "de-de") {
+        this.locale = "de";
+      } else if (this.locale === "fr" || this.locale === "fr-fr") {
+        this.locale = "fr-ch";
+      } else if (this.locale === "it-it") {
+        this.locale = "it";
       }
+      this.numberFormat = numberFormat[this.locale]
       this.datetimeFormatter = (datetime) => datetime.toLocaleString(this.locale);
 
       this.MODES = {
@@ -49,12 +97,12 @@
 
       this.convertTimer = 0;
 
+      this._initAmountInputs();
       this._initCurrenciesSelects();
       this._initRateTooltip();
       this._bindListeners();
 
       this.dom.on("currenciesLoaded.bsharpeConverter", () => {
-        this._formatNumericInput(this.amountSellInput.get(0));
         this.sellMode();
         this.amountSellInput.focus();
         this.convert();
@@ -69,18 +117,22 @@
     }
 
     _sanitizeAmount(amount) {
-      let sanitizedAmount = String(amount).replace(/[\s']/g, "");
-
-      if (this.locale === "en-us") {
-        sanitizedAmount = sanitizedAmount.replace(/,/g, "");
-      } else if (this.locale === "de") {
-        sanitizedAmount = sanitizedAmount.replace(/\./g, "").replace(/,/g, ".");
-      } else if (this.locale === "fr-ch") {
-      } else if (this.locale === "it") {
-        sanitizedAmount = sanitizedAmount.replace(/\./g, "").replace(/,/g, ".");
-      }
-
+      const sanitizedAmount = String(amount).replace(this.numberFormat.thousandsSeparator.regex, "")
+                                            .replace(this.numberFormat.decimalSeparator.regex, ".");
       return Number(sanitizedAmount);
+    }
+
+    _initAmountInputs() {
+      new Cleave(`#${this.amountSellInput.attr("id")}`, {
+        numeral: true,
+        numeralDecimalMark: this.numberFormat.decimalSeparator.str,
+        delimiter: this.numberFormat.thousandsSeparator.str,
+      });
+      new Cleave(`#${this.amountBuyInput.attr("id")}`, {
+        numeral: true,
+        numeralDecimalMark: this.numberFormat.decimalSeparator.str,
+        delimiter: this.numberFormat.thousandsSeparator.str,
+      });
     }
 
     _initCurrenciesSelects() {
@@ -137,55 +189,31 @@
       });
     }
 
-    _formatNumericInput(elt) {
-      const $elt = $(elt),
-            formatter = new Intl.NumberFormat(this.locale, {style: "currency", currency: "XXX", currencyDisplay: "code"}),
-            sanitizedAmount = this._sanitizeAmount($elt.val()),
-            formattedAmount = formatter.format(sanitizedAmount).replace("XXX", "").trim(),
-            inputSelectionEnd = elt.selectionEnd;
-      $elt.val(formattedAmount);
-      elt.selectionEnd = inputSelectionEnd;
-    }
-
     _bindListeners() {
       const triggerConvertOnKeyUp = (e) => {
-        const triggerOnTheseKeysOnly = [
-          "Digit0",
-          "Digit1",
-          "Digit2",
-          "Digit3",
-          "Digit4",
-          "Digit5",
-          "Digit6",
-          "Digit7",
-          "Digit8",
-          "Digit9",
-          "Numpad0",
-          "Numpad1",
-          "Numpad2",
-          "Numpad3",
-          "Numpad4",
-          "Numpad5",
-          "Numpad6",
-          "Numpad7",
-          "Numpad8",
-          "Numpad9",
-          "Backspace",
-          "Enter",
-          "NumpadEnter"
+        const doNotTriggerOnTheseKeys = [
+          "ControlLeft",
+          "ControlRight",
+          "ShiftLeft",
+          "ShiftRight",
+          "AltLeft",
+          "AltRight",
+          "Tab",
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
         ];
 
-        if (triggerOnTheseKeysOnly.includes(e.originalEvent.code)) {
+        if (!doNotTriggerOnTheseKeys.includes(e.originalEvent.code)) {
           this._delay(this.convert, 500)();
         }
       }
 
       this.amountSellInput.on("focus", () => this.sellMode())
-                          .on("keyup", triggerConvertOnKeyUp)
-                          .on("keyup", (e) => this._formatNumericInput(e.currentTarget));
+                          .on("keyup", triggerConvertOnKeyUp);
       this.amountBuyInput.on("focus", () => this.buyMode())
-                         .on("keyup", triggerConvertOnKeyUp)
-                         .on("keyup", (e) => this._formatNumericInput(e.currentTarget));
+                         .on("keyup", triggerConvertOnKeyUp);
 
       this.currencySellSelect.on("change", () => this.convert());
       this.currencyBuySelect.on("change", () => this.convert());
