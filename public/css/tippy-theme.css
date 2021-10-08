@@ -2,15 +2,24 @@
 	background-color: #8796db;
 	text-align:  center;
 }
+
 .tippy-box[data-theme~='b-sharpe'][data-placement^='top'] > .tippy-arrow::before {
   border-top-color: #8796db;
 }
+
 .tippy-box[data-theme~='b-sharpe'][data-placement^='bottom'] > .tippy-arrow::before {
   border-bottom-color: #8796db;
 }
+
 .tippy-box[data-theme~='b-sharpe'][data-placement^='left'] > .tippy-arrow::before {
   border-left-color: #8796db;
 }
+
 .tippy-box[data-theme~='b-sharpe'][data-placement^='right'] > .tippy-arrow::before {
   border-right-color: #8796db;
+}
+
+.tippy-box[data-theme~='b-sharpe'] .converter-tooltip-learn-more-link {
+  color: inherit;
+  text-decoration: underline;
 }

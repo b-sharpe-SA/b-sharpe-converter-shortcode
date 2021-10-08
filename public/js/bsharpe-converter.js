@@ -183,9 +183,26 @@
     }
 
     _initRateTooltip() {
+      const learnMoreTxt = __("Learn more");
+      let learnMoreUrl;
+
+      if (this.locale === "en-us") {
+        learnMoreUrl = "https://www.b-sharpe.com/en/rate/";
+      } else if (this.locale === "de") {
+        learnMoreUrl = "https://www.b-sharpe.com/de/kurse/";
+      } else if (this.locale === "fr-ch") {
+        learnMoreUrl = "https://www.b-sharpe.com/taux/";
+      } else if (this.locale === "it") {
+        learnMoreUrl = "https://www.b-sharpe.com/it/tasso/";
+      }
+
+      const learnMoreLink = `<a href="${learnMoreUrl}" target="_blank" rel="noopener noreferrer" class="converter-tooltip-learn-more-link">${learnMoreTxt}</a>`;
+
       tippy(this.exchangeRateSpan.get(0), {
-        content: this.exchangeRateSpan.data("tooltip"),
+        content: `${this.exchangeRateSpan.data("tooltip")}. ${learnMoreLink}`,
         theme: "b-sharpe",
+        allowHTML: true,
+        interactive: true,
       });
     }
 
